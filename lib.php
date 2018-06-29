@@ -143,12 +143,14 @@ function local_lom_initialise() {
  */
 function local_lom_extend_navigation_course($parentnode, $course, $context) {
     
-    $strmetadata = get_string('oaipmhexport', 'local_lom');
-    $url = new moodle_url('/local/lom/export.php', array('id' => $course->id));
-    $metadatanode = navigation_node::create($strmetadata, $url, navigation_node::NODETYPE_LEAF,
-         'lom', 'lom', new pix_icon('i/settings', $strmetadata));
+    if (has_capability('moodle/course:create', $context)) { 
+        $strmetadata = get_string('oaipmhexport', 'local_lom');
+        $url = new moodle_url('/local/lom/export.php', array('id' => $course->id));
+        $metadatanode = navigation_node::create($strmetadata, $url, navigation_node::NODETYPE_LEAF,
+             'lom', 'lom', new pix_icon('i/settings', $strmetadata));
 
-    $parentnode->add_node($metadatanode);
+        $parentnode->add_node($metadatanode);
+    }
     
 }
 /**
@@ -274,9 +276,6 @@ function local_lom_add_field($category, $field, $datatype, $contextlev, $default
                 $param1 = implode("\n", $menu_entry);
                 $new_field->param1 = $param1;
             }
-            
-            
-
             $DB->insert_record('local_metadata_field', $new_field);
             
             // zl_temp: special handling for lifecycle_contribute, add a second field for 'publisher'
